@@ -26,8 +26,16 @@ process.stdin.on("data", function(data) {
     }else if(!novaConsulta.hora) {
         novaConsulta.hora = data;
         consultas.push("Horário: " + novaConsulta.hora);
+        novaConsulta = [
+            {paciente: "",
+                medico: "",
+                data: "",
+                hora: ""
+            }
+        ]
         console.log("Consulta agendada, confira abaixo:");
         console.log(consultas);
+        console.log("Digite o nome do próximo paciente:")
     }
 })
 
