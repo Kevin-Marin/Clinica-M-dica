@@ -1,110 +1,86 @@
+let opcao;
 let consultas = [];
-let novaConsulta = {
-  paciente: "",
-  medico: "",
-  data: "",
-  hora: "",
-};
-let alterar;
-let cancelados = [];
-let indiceAtualizar;
+let consulta = {};
+
+let indiceAtualizar
 let atributoAtualizar
 
-console.log("Para marcar uma nova consulta, digite o nome do paciente:");
+console.log("O que deseja?");
+console.log("1. Inserir consulta");
+console.log("2. Listar consultas");
+console.log("3. Desmarcar consulta");
+console.log("4. Atualizar consulta");
 
 process.stdin.on("data", function (data) {
-  data = data.toString().trim();
+  let entrada = data.toString().trim();
 
-  if (data == "3") {
-    process.exit();
-  } else if (data == "1") {
-    console.log("Qual o nome do paciente que deseja alterar?");
-    alterar = true;
-  } else if (data == "2") {
-    console.log("Qual o nome do paciente para cancelamento?");
-    alterar = false;
+  if (!opcao) {
+    opcao = entrada;
+
+    switch (opcao) {
+      case "1":
+        console.log("Qual o nome do paciênte? ")
+        break;
+      case "3", "4":
+        console.log("Qual consulta deseja? Digite o indice")
+      case "2":
+        consultas.forEach(function(obj, indice) {
+          console.log(indice, obj)
+        })
+        if(opcao == "2")
+          opcao = undefined
+        break;
+      default:
+        console.log("Opção inválida");
+        opcao = undefined
+        break;
+    }
   } else {
-    if (alterar === true) {
-      console.log("Consulta do paciente " + data + " será alterada.");
-      console.log("Qual informação deseja alterar?");
-      switch (alterar) {
-        case "1":
-            console.log("Atualizando consulta");
-            if(!indiceAtualizar) {
-              indiceAtualizar = data
-              console.log("Qual atributo você deseja mudar? Digite o nome")
-              let atributos = Object.keys(consultas[indiceAtualizar])
-              for (let i = 0; i < atributos.length; i++) {
-                console.log(atributos[i])
-              }
-            } else if(!atributoAtualizar) {
-              atributoAtualizar = data
-              console.log("Qual é o novo valor?")
-            } else {
-              consultas[indiceAtualizar][atributoAtualizar] = data
-              console.log("Dado atualizado com sucesso")
-              indiceAtualizar = undefined
-              atributoAtualizar = undefined
-              opcao = undefined
-            }
-            break;
-      
-
-      }
-      alterar = undefined;
-    } else if (alterar === false) {
-      console.log("Consulta do paciente " + data + " será cancelada.");
-      cancelados.push(data);
-      alterar = undefined;
-    } else {
-      if (!novaConsulta.paciente) {
-        novaConsulta.paciente = data;
-        console.log(`Agora, digite o nome do médico:`);
-      } else if (!novaConsulta.medico) {
-        novaConsulta.medico = data;
-        console.log(`Qual a data da consulta? ex (dd/mm/aaaa)`);
-      } else if (!novaConsulta.data) {
-        novaConsulta.data = data;
-        console.log("Em qual horário?");
-      } else if (!novaConsulta.hora) {
-        novaConsulta.hora = data;
-        consultas.push({
-          paciente: novaConsulta.paciente,
-          medico: novaConsulta.medico,
-          data: novaConsulta.data,
-          hora: novaConsulta.hora,
-        });
-        novaConsulta = {
-          paciente: "",
-          medico: "",
-          data: "",
-          hora: "",
-        };
-        console.log("Consulta agendada, confira abaixo:");
-        console.log(consultas);
-
-        console.log(`Digite o nome do próximo paciente ou...
-    1 - para alterar;
-    2 - para cancelar;
-    3 - sair;`)
-      }else if(!indiceAtualizar) {
-        indiceAtualizar = data
-        console.log("Qual atributo você deseja mudar?")
-        let atributos = Object.keys(consultas[indiceAtualizar])
-            for(let i = 0; i < atributos.length; i++) {
-                console.log(atributos[i])
-            }
-
-        
-      }else if(!atributoAtualizar) {
-        atributoAtualizar = data
-        console.log("qual é o novo valor?")
-      } else {
-        consultas[indiceAtualizar][atributoAtualizar] = data
-        console.log("dados atualizados com sucesso")
-        indiceAtualizar = undefined
-        atributoAtualizar = undefined
-      }
+    switch (opcao) {
+      case "1":
+        if(!consulta.paciente) {
+          consulta.paciente = entrada;
+          console.log("Médico: ");
+        } else if(!consulta.medico) {
+          consulta.medico = entrada
+          console.log("Data: ");
+        } else if(!consulta.data) {
+          consulta.data = entrada
+          console.log("Horário: ");
+        } else {
+          consulta.horario = entrada
+          consulta.removido = false
+          consultas.push(consulta)
+          console.log(`Consulta agendada com sucesso`)
+          consulta = {}
+          opcao = undefined
+        }
+        break;
+      case "3":
+        let indiceRemocao = entrada
+        consultas[indiceRemocao].removido = true
+        console.log("Consulta removida com sucesso")
+        opcao = undefined
+      break;
+      case "4":
+        if(!indiceAtualizar) {
+          indiceAtualizar = entrada
+          console.log("Qual atributo você deseja mudar? Digite o nome")
+          let atributos = Object.keys(consultas[indiceAtualizar])
+          for (let i = 0; i < atributos.length; i++) {
+            console.log(atributos[i])
+          }
+        } else if(!atributoAtualizar) {
+          atributoAtualizar = entrada
+          console.log("Qual é o novo valor?")
+        } else {
+          consultas[indiceAtualizar][atributoAtualizar] = entrada
+          console.log("Dado atualizado com sucesso")
+          indiceAtualizar = undefined
+          atributoAtualizar = undefined
+          opcao = undefined
+        }
+        break;
     }
   }
 });
